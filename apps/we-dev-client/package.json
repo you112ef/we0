@@ -102,7 +102,7 @@
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
-    "electron": "29.4.6",
+    "electron": "37.2.4",
     "electron-builder": "^24.9.1",
     "less": "^4.2.0",
     "postcss": "^8.5.3",
