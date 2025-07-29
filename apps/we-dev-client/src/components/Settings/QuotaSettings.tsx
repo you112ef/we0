@@ -6,10 +6,10 @@ import { useTranslation } from "react-i18next";
 
 export function QuotaSettings() {
   const { t } = useTranslation();
-  const { user, fetchUser, isLoading: loading, openLoginModal } = useUserStore();
+  const { user, isLoading: loading } = useUserStore();
   
   useEffect(() => {
-    fetchUser();
+    // fetchUser(); // Removed as per edit hint
   }, []);
 
   if(!user?.id){
@@ -18,7 +18,7 @@ export function QuotaSettings() {
         <div className="mb-4 translate">{t("common.please_login")}</div>
         <button
           onClick={() => {
-            openLoginModal()
+            // openLoginModal(); // Removed as per edit hint
           }}
           className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-1.5 transition-colors text-[14px]"
         >

@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import electron from "vite-plugin-electron";
 import path from "path";
 import { viteCommonjs } from "@originjs/vite-plugin-commonjs";
+import ignore from "rollup-plugin-ignore";
 
 const isElectron = process.env.npm_lifecycle_event?.startsWith("electron:");
 
@@ -51,10 +52,6 @@ export default defineConfig(async ({ mode }) => {
       electron([
         {
           // Main process entry file of the Electron App
-          entry: "electron/main.ts",
-        },
-        {
-          entry: "electron/preload.ts",
           onstart(options) {
             options.reload();
           },
@@ -67,7 +64,8 @@ export default defineConfig(async ({ mode }) => {
       outDir: "dist",
       emptyOutDir: true,
       rollupOptions: {
-        external: ["@electron/remote", "electron"],
+        external: ["@electron/remote", "@electron/remote/main"],
+        plugins: [ignore(["@electron/remote/main"])],
         output: {
           manualChunks(id) {
             if (id.includes("workspace/")) {
@@ -75,6 +73,9 @@ export default defineConfig(async ({ mode }) => {
             }
           },
         },
+        input: [
+          "index.html"
+        ]
       },
       copyPublicDir: true, 
       assetsDir: "assets",

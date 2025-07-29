@@ -147,31 +147,6 @@ export function Sidebar({
     }
   }
   const renderUserSection = () => {
-    if (!isAuthenticated) {
-      return (
-        <div
-          className="p-3 cursor-pointer hover:bg-white/5"
-          onClick={() => {
-            openLoginModal()
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-gray-600 flex items-center justify-center text-white text-[14px] font-medium">
-              ?
-            </div>
-            <div className="flex-1">
-              <div className="dark:text-white text-[14px] font-medium">
-                {t("login.title")}
-              </div>
-              <div className="text-[13px] text-gray-400 translate">
-                {t("login.click_to_login")}
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    }
-
     return (
       <div
         className="p-3 cursor-pointer hover:bg-white/5"

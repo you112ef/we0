@@ -78,3 +78,26 @@ This solution applies to Windows 10/11 environments
   ###  🛠️ 3、Modify the content of the first line of code in the file.:
     --Original：#!/usr/bin/env node
     --Modified: #!node
+```
+
+# نشر we-dev-client على Cloudflare Pages وربطه مع backend على Docker
+
+## الخطوات بالعربية:
+1. **ارفع كود الواجهة إلى GitHub.**
+2. **أنشئ مشروع جديد في Cloudflare Pages واربطه بالريبو.**
+3. **حدد build command:**
+   - `pnpm build` أو `npm run build`
+   - output directory: `dist`
+4. **أضف متغير البيئة VITE_API_BASE_URL في إعدادات Cloudflare Pages:**
+   - اجعله يشير إلى عنوان backend (مثلاً: `https://api.yourdomain.com`)
+5. **انشر المشروع.**
+
+## English Steps:
+1. **Push your frontend code to GitHub.**
+2. **Create a new Cloudflare Pages project and link it to your repo.**
+3. **Set build command:**
+   - `pnpm build` or `npm run build`
+   - output directory: `dist`
+4. **Add the environment variable VITE_API_BASE_URL in Cloudflare Pages settings:**
+   - Set it to your backend URL (e.g., `https://api.yourdomain.com`)
+5. **Deploy the project.**

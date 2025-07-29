@@ -129,3 +129,31 @@ If you cannot join the WeChat group, you can add
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=we0-dev/we0&type=Date" />
  </picture>
 </a>
+
+# أتمتة نشر backend على VPS عبر GitHub Actions
+
+## الخطوات بالعربية:
+1. أنشئ مفتاح SSH جديد على جهازك:
+   ```bash
+   ssh-keygen -t ed25519 -C "github-actions" -f github-actions
+   ```
+2. أضف المفتاح العام (`github-actions.pub`) إلى السيرفر في `~/.ssh/authorized_keys`.
+3. أضف المفتاح الخاص (`github-actions`) إلى GitHub Secrets باسم `SSH_PRIVATE_KEY`.
+4. أضف المتغيرات التالية في GitHub Secrets:
+   - `SERVER_IP`: عنوان الـ IP للسيرفر
+   - `SERVER_USER`: اسم المستخدم (root أو ubuntu)
+   - `BACKEND_PATH`: المسار على السيرفر (مثلاً `/root/we-dev-next`)
+5. عند كل push على main، سيتم بناء وتشغيل backend تلقائيًا على السيرفر.
+
+## English Steps:
+1. Generate a new SSH key on your machine:
+   ```bash
+   ssh-keygen -t ed25519 -C "github-actions" -f github-actions
+   ```
+2. Add the public key (`github-actions.pub`) to your server's `~/.ssh/authorized_keys`.
+3. Add the private key (`github-actions`) to GitHub Secrets as `SSH_PRIVATE_KEY`.
+4. Add the following secrets in GitHub:
+   - `SERVER_IP`: your server's IP address
+   - `SERVER_USER`: username (root or ubuntu)
+   - `BACKEND_PATH`: path on server (e.g. `/root/we-dev-next`)
+5. On every push to main, backend will be built and run automatically on your server.
