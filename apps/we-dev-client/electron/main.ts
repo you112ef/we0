@@ -3,7 +3,6 @@ import path from "path";
 import {spawn} from "child_process";
 import {enable, initialize} from "@electron/remote/main";
 import fs from "fs";
-import {startLoginServer} from "./loginServer";
 import {isHiddenNodeModules} from "../config/electronOrSrcCommonConfig"
 
 import {MCPServer} from "@/types/mcp";
@@ -150,9 +149,6 @@ function createWindow() {
             },
         });
 
-        // Start login server and pass main window instance
-        const loginServer = startLoginServer(mainWindow);
-
         // Add IPC listener for opening external URLs
         ipcMain.on("open:external:url", (_, url) => {
             const {shell} = require("electron");
@@ -162,9 +158,6 @@ function createWindow() {
         // Clean up resources when window is closed
         mainWindow.on("closed", () => {
             mainWindow = null;
-            if (loginServer) {
-                loginServer.close();
-            }
         });
 
         // Remove menu bar
