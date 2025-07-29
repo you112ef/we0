@@ -10,7 +10,6 @@
     "build": "pnpm build:client"
   },
   "dependencies": {
-    "fabric": "^6.5.4",
     "qrcode.react": "^4.2.0",
     "react-i18next": "^15.4.0",
     "remark-gfm": "^4.0.1"
