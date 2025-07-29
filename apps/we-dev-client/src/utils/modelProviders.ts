@@ -46,6 +46,14 @@ export const MODEL_PROVIDERS: ModelProvider[] = [
     ],
   },
   {
+    id: "gemini",
+    label: "Gemini",
+    models: [
+      { value: "gemini-pro", label: "Gemini Pro", quota: 100, useImage: true, functionCall: true, provider: "gemini" },
+      { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro", quota: 100, useImage: true, functionCall: true, provider: "gemini" },
+    ],
+  },
+  {
     id: "deepseek",
     label: "DeepSeek",
     models: [
@@ -53,5 +61,34 @@ export const MODEL_PROVIDERS: ModelProvider[] = [
       { value: "deepseek-chat", label: "DeepSeek Chat", quota: 100, useImage: false, functionCall: false, provider: "deepseek" },
     ],
   },
-  // أضف مزودين آخرين حسب الحاجة
+  {
+    id: "huggingface",
+    label: "HuggingFace",
+    models: [
+      { value: "meta-llama/Llama-2-70b-chat-hf", label: "Llama 2 70B Chat", quota: 100, useImage: false, functionCall: false, provider: "huggingface" },
+      { value: "mistralai/Mistral-7B-Instruct-v0.2", label: "Mistral 7B Instruct", quota: 100, useImage: false, functionCall: false, provider: "huggingface" },
+    ],
+  },
+  {
+    id: "xai",
+    label: "xAI",
+    models: [
+      { value: "grok-1", label: "Grok-1", quota: 100, useImage: false, functionCall: false, provider: "xai" },
+    ],
+  },
+  {
+    id: "lmstudio",
+    label: "LMStudio",
+    models: [
+      { value: "lmstudio-local", label: "LMStudio Local", quota: 100, useImage: false, functionCall: false, provider: "lmstudio" },
+    ],
+  },
+  {
+    id: "ollama",
+    label: "Ollama",
+    models: [
+      { value: "llama2", label: "Llama 2", quota: 100, useImage: false, functionCall: false, provider: "ollama" },
+      { value: "mistral", label: "Mistral", quota: 100, useImage: false, functionCall: false, provider: "ollama" },
+    ],
+  },
 ];

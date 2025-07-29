@@ -127,6 +127,10 @@ export const BaseChat = ({uuid: propUuid}: { uuid?: string }) => {
         removeImage,
         clearImages,
         setModelOptions,
+        currentProviderId,
+        currentModelValue,
+        apiKeys,
+        modelOptions,
     } = useChatStore();
     const {resetTerminals} = useTerminalStore();
     const filesInitObj = {} as Record<string, string>;
@@ -332,7 +336,9 @@ export const BaseChat = ({uuid: propUuid}: { uuid?: string }) => {
         }
     }, [enabledMCPs])
 
-    // 修改 useChat 配置
+    const providerApiKey = apiKeys[currentProviderId] || "";
+    const selectedModel = modelOptions.find((m) => m.value === currentModelValue);
+
     const {
         messages: realMessages,
         input,
@@ -344,19 +350,22 @@ export const BaseChat = ({uuid: propUuid}: { uuid?: string }) => {
         stop,
         reload,
     } = useChat({
-        api: `${baseChatUrl}/api/chat`,
+        api: `${API_BASE}/api/chat`,
         headers: {
-            ...(token && {Authorization: `Bearer ${token}`}),
+            ...(providerApiKey && { Authorization: `Bearer ${providerApiKey}` }),
+            "X-Provider": currentProviderId,
+            "X-Model": currentModelValue,
         },
         body: {
-            model: baseModal.value,
+            provider: currentProviderId,
+            model: currentModelValue,
             mode: mode,
             otherConfig: {
                 ...otherConfig,
                 extra: {
                     ...otherConfig.extra,
                     isBackEnd: otherConfig.isBackEnd,
-                    backendLanguage: otherConfig.backendLanguage
+                    backendLanguage: otherConfig.backendLanguage,
                 },
             },
             // 如果模型支持 function call 且有启用的 MCP 工具，则添加 tools 配置
@@ -371,6 +380,10 @@ export const BaseChat = ({uuid: propUuid}: { uuid?: string }) => {
         },
         id: chatUuid,
         onResponse: async (response) => {
+            if (!providerApiKey) {
+                toast.error("يرجى إدخال مفتاح API للمزود المختار!");
+                return;
+            }
             if (baseModal.from === "ollama") {
                 const reader = response.body?.getReader();
                 if (!reader) return;
