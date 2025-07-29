@@ -9,6 +9,7 @@ import { IModelOption } from "../.."
 import useChatStore from "@/stores/chatSlice"
 import { aiProvierIcon } from "./config"
 import MCPToolsButton from "./MCPToolsButton"
+import { MODEL_PROVIDERS, ModelProvider, ModelOption } from "@/utils/modelProviders";
 
 export const UploadButtons: React.FC<UploadButtonsProps> = ({
   isLoading,
@@ -24,7 +25,18 @@ export const UploadButtons: React.FC<UploadButtonsProps> = ({
   const [isOpen, setIsOpen] = useState(false)
   const { t } = useTranslation()
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const { modelOptions, clearImages } = useChatStore()
+  const {
+    currentProviderId,
+    setCurrentProviderId,
+    currentModelValue,
+    setCurrentModelValue,
+    apiKeys,
+    setApiKey,
+    modelOptions,
+  } = useChatStore();
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [apiKeyInput, setApiKeyInput] = useState("");
+  const [providerForApiKey, setProviderForApiKey] = useState<ModelProvider | null>(null);
   const [isFigmaModalOpen, setIsFigmaModalOpen] = useState(false)
   const [figmaUrl, setFigmaUrl] = useState(() => localStorage.getItem('figmaUrl') || '')
   const [figmaToken, setFigmaToken] = useState(() => localStorage.getItem('figmaToken') || '')
@@ -43,11 +55,40 @@ export const UploadButtons: React.FC<UploadButtonsProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const handleModelSelect = (model: IModelOption) => {
-    setBaseModal(model)
-    setIsOpen(false)
-    console.log("Selected model:", model.value)
-  }
+  // عند تغيير المزود، حدث النماذج واختر أول نموذج افتراضي
+  const handleProviderSelect = (providerId: string) => {
+    setCurrentProviderId(providerId);
+  };
+
+  // عند تغيير النموذج
+  const handleModelSelect = (modelValue: string) => {
+    setCurrentModelValue(modelValue);
+    const model = modelOptions.find((m) => m.value === modelValue);
+    if (model) setBaseModal(model as any);
+  };
+
+  // فتح نافذة إدخال مفتاح API
+  const handleOpenApiKeyModal = (provider: ModelProvider) => {
+    setProviderForApiKey(provider);
+    setApiKeyInput(apiKeys[provider.id] || "");
+    setShowApiKeyModal(true);
+  };
+
+  // حفظ مفتاح API
+  const handleSaveApiKey = () => {
+    if (providerForApiKey) {
+      setApiKey(providerForApiKey.id, apiKeyInput);
+      setShowApiKeyModal(false);
+    }
+  };
+
+  // تحديث النموذج الافتراضي عند تغيير المزود
+  useEffect(() => {
+    if (modelOptions.length > 0) {
+      setCurrentModelValue(modelOptions[0].value);
+      setBaseModal(modelOptions[0] as any);
+    }
+  }, [modelOptions]);
 
   const handleFigmaSubmit = () => {
     localStorage.setItem('figmaUrl', figmaUrl)
@@ -76,6 +117,56 @@ export const UploadButtons: React.FC<UploadButtonsProps> = ({
 
   return (
     <div className="flex items-center">
+      {/* قائمة مزودي الذكاء الاصطناعي */}
+      <div className="relative mr-2">
+        <select
+          value={currentProviderId}
+          onChange={(e) => handleProviderSelect(e.target.value)}
+          className="px-2 py-1 rounded border border-gray-300 dark:bg-[#252525] dark:text-gray-200"
+        >
+          {MODEL_PROVIDERS.map((provider) => (
+            <option key={provider.id} value={provider.id}>
+              {provider.label}
+            </option>
+          ))}
+        </select>
+        {/* زر مفتاح API */}
+        <button
+          className="ml-1 text-xs text-blue-500 underline"
+          onClick={() => handleOpenApiKeyModal(MODEL_PROVIDERS.find(p => p.id === currentProviderId)!)}
+        >
+          API Key
+        </button>
+      </div>
+      {/* قائمة النماذج */}
+      <div className="relative mr-2">
+        <select
+          value={currentModelValue}
+          onChange={(e) => handleModelSelect(e.target.value)}
+          className="px-2 py-1 rounded border border-gray-300 dark:bg-[#252525] dark:text-gray-200"
+        >
+          {modelOptions.map((model) => (
+            <option key={model.value} value={model.value}>
+              {model.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* نافذة إدخال مفتاح API */}
+      {showApiKeyModal && (
+        <Modal
+          open={showApiKeyModal}
+          onCancel={() => setShowApiKeyModal(false)}
+          onOk={handleSaveApiKey}
+          title={`API Key for ${providerForApiKey?.label}`}
+        >
+          <Input
+            value={apiKeyInput}
+            onChange={(e) => setApiKeyInput(e.target.value)}
+            placeholder="Enter API Key"
+          />
+        </Modal>
+      )}
       <div className="flex items-center gap-2">
         {/* MCP Tools Button - Disabled when functionCall is false */}
         {isElectron && (
@@ -189,8 +280,8 @@ export const UploadButtons: React.FC<UploadButtonsProps> = ({
                   onClick={(e) => {
                     e.stopPropagation()
                     e.preventDefault()
-                    handleModelSelect(model as IModelOption)
-                    clearImages()
+                    handleModelSelect(model.value)
+                    // clearImages() // This line was removed from the new_code, so it's removed here.
                   }}
                   className={classNames(
                     "w-full px-3 py-1.5 flex justify-between text-left text-[11px] transition-colors duration-200",
