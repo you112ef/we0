@@ -3,7 +3,6 @@ import useChatModeStore from "./stores/chatModeSlice";
 import {GlobalLimitModal} from "./components/UserModal";
 import Header from "./components/Header";
 import AiChat from "./components/AiChat";
-import Login from "./components/Login";
 import EditorPreviewTabs from "./components/EditorPreviewTabs";
 import "./utils/i18";
 import classNames from "classnames";
@@ -25,7 +24,6 @@ function App() {
     return (
         <TopViewContainer>
             <GlobalLimitModal onLogin={openLoginModal}/>
-            <Login isOpen={isLoginModalOpen} onClose={closeLoginModal}/>
             <div
                 className={classNames(
                     "h-screen w-screen flex flex-col overflow-hidden",
