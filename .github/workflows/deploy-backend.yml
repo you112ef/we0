@@ -1,0 +1,35 @@
+name: Deploy Backend to VPS
+
+on:
+  push:
+    paths:
+      - 'apps/we-dev-next/**'
+      - '.github/workflows/deploy-backend.yml'
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Copy backend files to server
+        run: |
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" apps/we-dev-next/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.BACKEND_PATH }}
+
+      - name: Build and run Docker on server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+            cd ${{ secrets.BACKEND_PATH }} &&
+            docker build -t we-dev-backend . &&
+            docker stop we-dev-backend || true &&
+            docker rm we-dev-backend || true &&
+            docker run -d --restart always --env-file .env -p 3000:3000 --name we-dev-backend we-dev-backend
+          "
